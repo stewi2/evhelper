@@ -82,9 +82,16 @@ android {
         applicationId "com.evhelper"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName project.hasProperty('appVersion') ? project.appVersion : "1.0"
-        archivesBaseName = "evhelper-${versionName}"
+
+        def versionString = project.hasProperty('appVersion') ? project.appVersion : "1.0.0"
+        def versionParts = versionString.tokenize('.')
+        def major = versionParts[0].toInteger()
+        def minor = versionParts.size() > 1 ? versionParts[1].toInteger() : 0
+        def patch = versionParts.size() > 2 ? versionParts[2].toInteger() : 0
+
+        versionCode major * 10000 + minor * 100 + patch
+        versionName versionString
+        archivesBaseName = "evhelper-${versionString}"
     }
     signingConfigs {
         debug {
