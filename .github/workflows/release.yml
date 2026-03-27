@@ -34,17 +34,17 @@ jobs:
 
       - name: Build release
         working-directory: android
-        run: ./gradlew assembleRelease --no-daemon
+        run: ./gradlew assembleRelease --no-daemon -PappVersion=${GITHUB_REF_NAME#v}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: evhelper-release-apk
-          path: android/app/build/outputs/apk/release/app-release.apk
+          name: evhelper-${{ github.ref_name }}
+          path: android/app/build/outputs/apk/release/evhelper-*.apk
           retention-days: 30
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: android/app/build/outputs/apk/release/app-release.apk
+          files: android/app/build/outputs/apk/release/evhelper-*.apk
           generate_release_notes: true
