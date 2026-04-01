@@ -137,10 +137,12 @@ function buildDeeplink(
 ): string {
   const t = Math.floor(Date.now() / 1000);
   const yymmdd = toYYMMDD(date);
-  const tag = 'c' + yymmdd + 'DES' + objectName.replace(/[/ ]/g, '') + '1';
+  const stripped = objectName.replace(/[/ ]/g, '');
+  const suffix = stripped.startsWith('C') ? stripped.slice(1) : 'DES' + stripped;
+  const tag = 'c' + yymmdd + suffix + '1';
   return (
     `unistellar://science/comet?ra=${ra.toFixed(5)}&dec=${dec.toFixed(5)}` +
-    `&et=${Math.round(expTime)}&g=${Math.round(gainDb)}&d=${duration}` +
+    `&et=${Math.round(expTime)}&g=${Math.round(gainDb)}&d=${Math.round(parseFloat(duration))}` +
     `&t=${t}&scitag=${tag}`
   );
 }
