@@ -68,6 +68,9 @@ export function CometsScreen({
       parseFloat(item.gain),
       item.duration,
     );
+
+    console.log('deeplink', deeplink);
+
     if (!deeplink) {
       Alert.alert('Position Unavailable', 'Could not fetch current ephemeris from JPL Horizons.');
       return;
