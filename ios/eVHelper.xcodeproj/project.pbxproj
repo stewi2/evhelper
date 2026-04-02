@@ -23,9 +23,9 @@
 		13B07FB71A68108700A75B9A /* eVHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eVHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20F391340F3E1E1AC5D57A63 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = ../PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		A1B2C3D4E5F6A1B2C3D4E5F7 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3465F1DF8C8883DA9D565CCF /* Pods-eVHelper.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-eVHelper.release.xcconfig"; path = "Target Support Files/Pods-eVHelper/Pods-eVHelper.release.xcconfig"; sourceTree = "<group>"; };
 		3ED255F6107C790FCFCC47BE /* Pods-eVHelper.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-eVHelper.debug.xcconfig"; path = "Target Support Files/Pods-eVHelper/Pods-eVHelper.debug.xcconfig"; sourceTree = "<group>"; };
+		A1B2C3D4E5F6A1B2C3D4E5F7 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A592EFC9E38FE5078934C1FA /* libPods-eVHelper.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-eVHelper.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED2803B4B34C4A679246C8B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
