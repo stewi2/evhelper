@@ -9,8 +9,6 @@ dist/
 web-build/
 
 # Native
-ios/build/
-ios/Pods/
 ios/.xcode.env.local
 xcuserdata/
 ios/DerivedData/
