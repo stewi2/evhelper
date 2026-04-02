@@ -1,0 +1,6 @@
+module Pods_eVHelper {
+  umbrella header "Pods-eVHelper-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,48 @@
+{
+  "name": "react-native-geolocation",
+  "version": "3.4.0",
+  "summary": "React Native Geolocation Module for iOS and Android",
+  "license": "MIT",
+  "authors": "React Native Community",
+  "homepage": "https://github.com/michalchudziak/react-native-geolocation#README.md",
+  "platforms": {
+    "ios": "9.0",
+    "visionos": "1.0"
+  },
+  "source": {
+    "git": "https://github.com/react-native-community/react-native-geolocation.git",
+    "tag": "v3.4.0"
+  },
+  "source_files": "ios/**/*.{h,m,mm}",
+  "frameworks": "CoreLocation",
+  "compiler_flags": "-DRCT_NEW_ARCH_ENABLED=1",
+  "dependencies": {
+    "React-Core": [],
+    "React-RCTFabric": [],
+    "ReactCodegen": [],
+    "RCTRequired": [],
+    "RCTTypeSafety": [],
+    "ReactCommon/turbomodule/bridging": [],
+    "ReactCommon/turbomodule/core": [],
+    "React-NativeModulesApple": [],
+    "Yoga": [],
+    "React-Fabric": [],
+    "React-graphics": [],
+    "React-utils": [],
+    "React-featureflags": [],
+    "React-debug": [],
+    "React-ImageManager": [],
+    "React-rendererdebug": [],
+    "React-jsi": [],
+    "React-renderercss": [],
+    "hermes-engine": [],
+    "ReactNativeDependencies": [],
+    "React-Core-prebuilt": []
+  },
+  "pod_target_xcconfig": {
+    "HEADER_SEARCH_PATHS": "\"$(PODS_ROOT)/Headers/Private/Yoga\"",
+    "CLANG_CXX_LANGUAGE_STANDARD": "c++20",
+    "OTHER_CPLUSPLUSFLAGS": "$(inherited) -DRCT_NEW_ARCH_ENABLED=1 ",
+    "OTHER_SWIFT_FLAGS": "$(inherited) -DRCT_NEW_ARCH_ENABLED"
+  }
+}
