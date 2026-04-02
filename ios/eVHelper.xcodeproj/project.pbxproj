@@ -14,6 +14,7 @@
 		2D02E4BE1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2D02E4BD1E0B4A84006451C7 /* Images.xcassets */; };
 		9FD50E8B856B91F4E8CC177E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 20F391340F3E1E1AC5D57A63 /* PrivacyInfo.xcprivacy */; };
 		A1B2C3D4E5F6A1B2C3D4E5F6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A1B2C3D4E5F7 /* LaunchScreen.storyboard */; };
+		B1D2E3F4A5B6C7D8E9F0A1B2 /* Dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E3F4A5B6C7D8E9F0A1B2C3 /* Dummy.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,8 @@
 		3ED255F6107C790FCFCC47BE /* Pods-eVHelper.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-eVHelper.debug.xcconfig"; path = "Target Support Files/Pods-eVHelper/Pods-eVHelper.debug.xcconfig"; sourceTree = "<group>"; };
 		A1B2C3D4E5F6A1B2C3D4E5F7 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A592EFC9E38FE5078934C1FA /* libPods-eVHelper.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-eVHelper.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2E3F4A5B6C7D8E9F0A1B2C3 /* Dummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dummy.swift; sourceTree = "<group>"; };
+		D3F4A5B6C7D8E9F0A1B2C3D4 /* eVHelper-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "eVHelper-Bridging-Header.h"; sourceTree = "<group>"; };
 		ED2803B4B34C4A679246C8B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -52,6 +55,8 @@
 				A1B2C3D4E5F6A1B2C3D4E5F7 /* LaunchScreen.storyboard */,
 				ED2803B4B34C4A679246C8B3 /* Info.plist */,
 				20F391340F3E1E1AC5D57A63 /* PrivacyInfo.xcprivacy */,
+				C2E3F4A5B6C7D8E9F0A1B2C3 /* Dummy.swift */,
+				D3F4A5B6C7D8E9F0A1B2C3D4 /* eVHelper-Bridging-Header.h */,
 			);
 			path = eVHelper;
 			sourceTree = "<group>";
@@ -268,6 +273,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.h in Sources */,
 				00C302E51ABCBA2D00DB3ED1 /* main.m in Sources */,
 				00C302EA1ABCBA2D00DB3ED1 /* AppDelegate.mm in Sources */,
+				B1D2E3F4A5B6C7D8E9F0A1B2 /* Dummy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,6 +308,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "eVHelper/eVHelper-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -337,6 +344,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "eVHelper/eVHelper-Bridging-Header.h";
 				SWIFT_VERSION = 5;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -397,9 +405,9 @@
 					"$(inherited)",
 				);
 				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
 					"\"$(SDKROOT)/usr/lib/swift\"",
 					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
-					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -470,9 +478,9 @@
 					"$(inherited)",
 				);
 				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
 					"\"$(SDKROOT)/usr/lib/swift\"",
 					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
-					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = (
