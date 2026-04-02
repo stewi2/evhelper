@@ -50,3 +50,5 @@ jobs:
         with:
           files: android/app/build/outputs/apk/release/evhelper-*.apk
           generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
