@@ -1,7 +1,8 @@
 import * as React from 'react';
-import {useState} from 'react';
-import {StyleSheet} from 'react-native';
+import {useState, useEffect} from 'react';
+import {StyleSheet, View, Text, TouchableOpacity, Platform, ActivityIndicator, Modal, PermissionsAndroid} from 'react-native';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
+import Geolocation from '@react-native-community/geolocation';
 import {Colors, SortKey} from './utils/theme';
 import {useTargets} from './hooks/useTargets';
 import {useComets} from './hooks/useComets';
@@ -18,13 +19,17 @@ interface Obs {
   lon: number;
 }
 
+const MONO = Platform.OS === 'ios' ? 'Courier New' : 'monospace';
+
 export default function App() {
   const now = useClock(1000);
   const altAzNow = useClock(60000);
   const targetHook = useTargets();
   const cometHook = useComets();
 
-  const [obs, setObs] = useState<Obs>({lat: 0, lon: 0});
+  const [obs, setObs] = useState<Obs | null>(null);
+  const [locError, setLocError] = useState<string | null>(null);
+  const [locLoading, setLocLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('transients');
   const [showLocation, setShowLocation] = useState(false);
   const [sortKey, setSortKey] = useState<SortKey>('alt_desc');
@@ -32,6 +37,46 @@ export default function App() {
   const [clsFilter, setClsFilter] = useState<string | null>(null);
 
   const toggleLocation = () => setShowLocation(v => !v);
+
+  async function requestLocation() {
+    setLocLoading(true);
+    setLocError(null);
+
+    if (Platform.OS === 'android') {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Location Permission',
+          message: 'eVHelper needs your location to calculate altitude and azimuth for observation targets.',
+          buttonPositive: 'Allow',
+        },
+      );
+      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        setLocError('Location permission denied. Please grant access in Settings.');
+        setLocLoading(false);
+        return;
+      }
+    } else {
+      Geolocation.requestAuthorization();
+    }
+
+    Geolocation.getCurrentPosition(
+      pos => {
+        const lat = +pos.coords.latitude.toFixed(5);
+        const lon = +pos.coords.longitude.toFixed(5);
+        setObs({lat, lon});
+        setLocLoading(false);
+      },
+      err => {
+        setLocError(err.message);
+        setLocLoading(false);
+      },
+      {enableHighAccuracy: false, timeout: 10000},
+    );
+  }
+
+  // Use a fallback location for rendering when obs is null (content hidden behind modal)
+  const displayObs = obs ?? {lat: 0, lon: 0};
 
   return (
     <SafeAreaProvider>
@@ -42,7 +87,7 @@ export default function App() {
         onChange={tab => { setActiveTab(tab); setShowLocation(false); }}
       />
 
-      {showLocation && (
+      {showLocation && obs && (
         <LocationPanel
           obs={obs}
           onUpdate={newObs => { setObs(newObs); setShowLocation(false); }}
@@ -51,7 +96,7 @@ export default function App() {
 
       {activeTab === 'transients' && (
         <TransientsScreen
-          obs={obs}
+          obs={displayObs}
           now={now}
           altAzNow={altAzNow}
           onToggleLocation={toggleLocation}
@@ -67,7 +112,7 @@ export default function App() {
 
       {activeTab === 'comets' && (
         <CometsScreen
-          obs={obs}
+          obs={displayObs}
           altAzNow={altAzNow}
           onToggleLocation={toggleLocation}
           cometHook={cometHook}
@@ -77,6 +122,34 @@ export default function App() {
           onMinAltChange={setMinAlt}
         />
       )}
+
+      <Modal
+        visible={!obs}
+        transparent
+        animationType="fade"
+        statusBarTranslucent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.locTitle}>LOCATION REQUIRED</Text>
+            <Text style={styles.locDesc}>
+              eVHelper needs your location to calculate altitude and azimuth for
+              observation targets.
+            </Text>
+            {locLoading ? (
+              <ActivityIndicator color={Colors.accent} size="large" style={styles.locSpinner} />
+            ) : (
+              <>
+                {locError && (
+                  <Text style={styles.locError}>{locError}</Text>
+                )}
+                <TouchableOpacity style={styles.locBtn} onPress={requestLocation} activeOpacity={0.8}>
+                  <Text style={styles.locBtnText}>Grant Location Access</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -84,4 +157,58 @@ export default function App() {
 
 const styles = StyleSheet.create({
   root: {flex: 1, backgroundColor: Colors.bg},
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  modalCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    padding: 28,
+    alignItems: 'center',
+    width: '100%',
+    maxWidth: 340,
+  },
+  locTitle: {
+    fontFamily: MONO,
+    fontSize: 14,
+    letterSpacing: 3,
+    color: Colors.text,
+    marginBottom: 16,
+  },
+  locDesc: {
+    fontFamily: MONO,
+    fontSize: 13,
+    color: Colors.muted,
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  locSpinner: {
+    marginTop: 16,
+  },
+  locError: {
+    fontFamily: MONO,
+    fontSize: 12,
+    color: '#ff6b6b',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  locBtn: {
+    backgroundColor: Colors.accent,
+    borderRadius: 10,
+    paddingVertical: 14,
+    paddingHorizontal: 28,
+  },
+  locBtnText: {
+    color: Colors.bg,
+    fontWeight: '700',
+    fontSize: 15,
+    letterSpacing: 0.3,
+  },
 });
