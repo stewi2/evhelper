@@ -30,6 +30,7 @@ export default function App() {
   const [obs, setObs] = useState<Obs | null>(null);
   const [locError, setLocError] = useState<string | null>(null);
   const [locLoading, setLocLoading] = useState(false);
+  const [initialCheckDone, setInitialCheckDone] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('transients');
   const [showLocation, setShowLocation] = useState(false);
   const [sortKey, setSortKey] = useState<SortKey>('alt_desc');
@@ -81,8 +82,11 @@ export default function App() {
         const lat = +pos.coords.latitude.toFixed(5);
         const lon = +pos.coords.longitude.toFixed(5);
         setObs({lat, lon});
+        setInitialCheckDone(true);
       },
-      () => {},
+      () => {
+        setInitialCheckDone(true);
+      },
       {enableHighAccuracy: false, timeout: 5000},
     );
   }, []);
@@ -136,7 +140,7 @@ export default function App() {
       )}
 
       <Modal
-        visible={!obs}
+        visible={!obs && initialCheckDone}
         transparent
         animationType="fade"
         statusBarTranslucent>
