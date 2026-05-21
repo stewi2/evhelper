@@ -75,6 +75,18 @@ export default function App() {
     );
   }
 
+  useEffect(() => {
+    Geolocation.getCurrentPosition(
+      pos => {
+        const lat = +pos.coords.latitude.toFixed(5);
+        const lon = +pos.coords.longitude.toFixed(5);
+        setObs({lat, lon});
+      },
+      () => {},
+      {enableHighAccuracy: false, timeout: 5000},
+    );
+  }, []);
+
   // Use a fallback location for rendering when obs is null (content hidden behind modal)
   const displayObs = obs ?? {lat: 0, lon: 0};
 
