@@ -1,10 +1,11 @@
 import {useState, useEffect, useCallback} from 'react';
-import {fetchComets} from '../utils/comets';
-import type {CometTarget, Obs} from '../utils/comets';
+import {fetchMovingTargets} from '../utils/movingTargets';
+import type {MovingTarget} from '../utils/movingTargets';
+import type {Obs} from '../utils/comets';
 import type {FetchStatus} from './useTargets';
 
-export function useComets(obs: Obs | null) {
-  const [comets, setComets] = useState<CometTarget[]>([]);
+export function useMovingTargets(obs: Obs | null) {
+  const [movingTargets, setMovingTargets] = useState<MovingTarget[]>([]);
   const [status, setStatus] = useState<FetchStatus>('idle');
   const [statusMsg, setStatusMsg] = useState('');
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -17,13 +18,13 @@ export function useComets(obs: Obs | null) {
       return;
     }
     if (isRefresh) {setRefreshing(true);}
-    else {setStatus('loading'); setStatusMsg('Fetching comets…');}
+    else {setStatus('loading'); setStatusMsg('Fetching moving targets…');}
 
     try {
-      const targets = await fetchComets(new Date(), obs);
-      setComets(targets);
+      const targets = await fetchMovingTargets(new Date(), obs);
+      setMovingTargets(targets);
       setStatus('ok');
-      setStatusMsg(`${targets.length} comets`);
+      setStatusMsg(`${targets.length} moving targets`);
       setLastUpdated(new Date());
     } catch (err) {
       setStatus('warn');
@@ -37,5 +38,5 @@ export function useComets(obs: Obs | null) {
 
   const refresh = useCallback(() => load(true), [load]);
 
-  return {comets, status, statusMsg, lastUpdated, refreshing, refresh};
+  return {movingTargets, status, statusMsg, lastUpdated, refreshing, refresh};
 }

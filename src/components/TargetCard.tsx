@@ -17,9 +17,10 @@ import {Colors, getClassColor} from '../utils/theme';
 interface Props {
   target: TargetWithAltAz;
   onOpen?: () => Promise<void>;
+  onDelete?: () => void;
 }
 
-export function TargetCard({target: r, onOpen}: Props) {
+export function TargetCard({target: r, onOpen, onDelete}: Props) {
   const [opening, setOpening] = useState(false);
   const abv = r.alt >= 0;
   const ac = altColor(r.alt);
@@ -68,6 +69,11 @@ export function TargetCard({target: r, onOpen}: Props) {
             {opening
               ? <ActivityIndicator size="small" color={Colors.accent2} />
               : <Text style={styles.openBtnText}>▶ Open</Text>}
+          </TouchableOpacity>
+        )}
+        {!!onDelete && (
+          <TouchableOpacity style={styles.deleteBtn} onPress={onDelete} activeOpacity={0.7}>
+            <Text style={styles.deleteBtnText}>✕</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -175,6 +181,20 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.accent2,
     letterSpacing: 0.5,
+  },
+  deleteBtn: {
+    paddingHorizontal: 10,
+    paddingVertical: 9,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.danger + '66',
+    backgroundColor: Colors.danger + '15',
+  },
+  deleteBtnText: {
+    fontFamily: MONO,
+    fontSize: 12,
+    color: Colors.danger,
+    fontWeight: '700',
   },
   altRow: {
     flexDirection: 'row',

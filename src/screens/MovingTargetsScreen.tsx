@@ -10,9 +10,9 @@ import {
 } from 'react-native';
 import {Colors, SortKey} from '../utils/theme';
 import {radecToAltAz} from '../utils/astronomy';
-import {fetchFreshDeeplink} from '../utils/comets';
-import type {CometTarget} from '../utils/comets';
-import type {useComets} from '../hooks/useComets';
+import {fetchFreshDeeplink} from '../utils/movingTargets';
+import type {MovingTarget} from '../utils/movingTargets';
+import type {useMovingTargets} from '../hooks/useMovingTargets';
 import {TargetCard} from '../components/TargetCard';
 import {SortPanel} from '../components/SortPanel';
 import {Toolbar} from '../components/Toolbar';
@@ -22,30 +22,30 @@ interface Obs {
   lon: number;
 }
 
-type CometHook = ReturnType<typeof useComets>;
+type MovingTargetsHook = ReturnType<typeof useMovingTargets>;
 
 interface Props {
   obs: Obs;
   altAzNow: Date;
   onToggleLocation: () => void;
-  cometHook: CometHook;
+  movingTargetsHook: MovingTargetsHook;
   sortKey: SortKey;
   onSortChange: (k: SortKey) => void;
   minAlt: number | null;
   onMinAltChange: (v: number | null) => void;
 }
 
-export function CometsScreen({
-  obs, altAzNow, onToggleLocation, cometHook,
+export function MovingTargetsScreen({
+  obs, altAzNow, onToggleLocation, movingTargetsHook,
   sortKey, onSortChange, minAlt, onMinAltChange,
 }: Props) {
-  const {comets, status, statusMsg, refreshing, refresh} = cometHook;
+  const {movingTargets, status, statusMsg, refreshing, refresh} = movingTargetsHook;
   const [showSort, setShowSort] = useState(false);
 
-  type CometRow = CometTarget & {alt: number; az: number};
+  type MovingRow = MovingTarget & {alt: number; az: number};
 
-  const rows = useMemo<CometRow[]>(() => {
-    const computed: CometRow[] = comets.map(t => ({
+  const rows = useMemo<MovingRow[]>(() => {
+    const computed: MovingRow[] = movingTargets.map(t => ({
       ...t,
       ...radecToAltAz(t.ra, t.dec, obs.lat, obs.lon, altAzNow),
     }));
@@ -59,18 +59,17 @@ export function CometsScreen({
       }
     });
     return minAlt !== null ? computed.filter(r => r.alt >= minAlt) : computed;
-  }, [comets, obs, altAzNow, sortKey, minAlt]);
+  }, [movingTargets, obs, altAzNow, sortKey, minAlt]);
 
-  async function handleCometOpen(item: CometRow) {
+  async function handleOpen(item: MovingRow) {
     const deeplink = await fetchFreshDeeplink(
+      item.astNumber,
       item.objectName,
       parseFloat(item.exp),
       parseFloat(item.gain),
       item.duration,
       obs,
     );
-
-    console.log('deeplink', deeplink);
 
     if (!deeplink) {
       Alert.alert('Position Unavailable', 'Could not fetch current ephemeris from JPL Horizons.');
@@ -91,8 +90,8 @@ export function CometsScreen({
         statusMsg={statusMsg}
         minAlt={minAlt}
         visibleCount={rows.length}
-        totalCount={comets.length}
-        itemLabel="comets"
+        totalCount={movingTargets.length}
+        itemLabel="moving targets"
         onRefresh={refresh}
         onToggleSort={() => setShowSort(v => !v)}
         onToggleLocation={onToggleLocation}
@@ -110,7 +109,7 @@ export function CometsScreen({
         data={rows}
         keyExtractor={(item, i) => item.name + i}
         renderItem={({item}) => (
-          <TargetCard target={item} onOpen={() => handleCometOpen(item)} />
+          <TargetCard target={item} onOpen={() => handleOpen(item)} />
         )}
         refreshing={refreshing}
         onRefresh={refresh}
@@ -119,7 +118,7 @@ export function CometsScreen({
           status !== 'loading' ? (
             <View style={styles.empty}>
               <Text style={styles.emptyText}>
-                {status === 'warn' ? statusMsg : 'No active comets.'}
+                {status === 'warn' ? statusMsg : 'No active moving targets.'}
               </Text>
             </View>
           ) : null
