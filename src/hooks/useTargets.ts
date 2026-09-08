@@ -21,7 +21,7 @@ export function useTargets() {
       setStatus('ok');
       setStatusMsg(`${t.length} targets`);
       setLastUpdated(new Date());
-    } catch (err) {
+    } catch {
       setStatus('warn');
       setStatusMsg('Fetch failed');
     } finally {
