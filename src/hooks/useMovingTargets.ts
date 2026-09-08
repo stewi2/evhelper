@@ -26,7 +26,8 @@ export function useMovingTargets(obs: Obs | null) {
       setStatus('ok');
       setStatusMsg(`${targets.length} moving targets`);
       setLastUpdated(new Date());
-    } catch {
+
+    } catch (err) {
       setStatus('warn');
       setStatusMsg('Fetch failed');
     } finally {

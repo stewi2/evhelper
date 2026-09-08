@@ -42,7 +42,8 @@ export function useCustomTargets(obs: Obs | null) {
       setStatus('ok');
       setStatusMsg(`${fetched.length} custom objects`);
       setLastUpdated(new Date());
-    } catch {
+
+    } catch (err) {
       setStatus('warn');
       setStatusMsg('Fetch failed');
     } finally {
