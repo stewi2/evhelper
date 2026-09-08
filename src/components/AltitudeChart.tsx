@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {useMemo} from 'react';
 import {View, Text, StyleSheet, Platform} from 'react-native';
-import {radecToAltAz, altColor, sunAltitude} from '../utils/astronomy';
+import {radecToAltAz, altColor, compassDir, sunAltitude} from '../utils/astronomy';
 import {Colors} from '../utils/theme';
 
 interface Props {
@@ -39,12 +39,14 @@ function altToY(alt: number): number {
 
 export function AltitudeChart({ra, dec, lat, lon, start, minAlt}: Props) {
   const {samples, peak} = useMemo(() => {
-    const pts: {alt: number; sunAlt: number; date: Date}[] = [];
+    const pts: {alt: number; az: number; sunAlt: number; date: Date}[] = [];
     const stepMs = 3600000 / STEPS_PER_HOUR;
     for (let i = 0; i < HOURS * STEPS_PER_HOUR; i++) {
       const date = new Date(start.getTime() + i * stepMs);
+      const {alt, az} = radecToAltAz(ra, dec, lat, lon, date);
       pts.push({
-        alt: radecToAltAz(ra, dec, lat, lon, date).alt,
+        alt,
+        az,
         sunAlt: sunAltitude(date, lat, lon),
         date,
       });
@@ -62,11 +64,12 @@ export function AltitudeChart({ra, dec, lat, lon, start, minAlt}: Props) {
       <View style={styles.headerRow}>
         <Text style={styles.title}>NEXT 24H</Text>
         <Text style={styles.peak}>
-          peak{' '}
+          transit at {hhmm(peak.date)}{' '}
           <Text style={{color: altColor(peak.alt)}}>
             {peak.alt >= 0 ? '+' : ''}{peak.alt.toFixed(1)}°
           </Text>
-          {' '}at {hhmm(peak.date)}
+          {' '}{peak.az.toFixed(0)}°{' '}
+          <Text style={{color: altColor(peak.alt)}}>{compassDir(peak.az)}</Text>
         </Text>
       </View>
 
