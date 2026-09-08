@@ -14,6 +14,7 @@ import {fetchFreshDeeplink} from '../utils/comets';
 import type {CometTarget} from '../utils/comets';
 import type {useComets} from '../hooks/useComets';
 import {TargetCard} from '../components/TargetCard';
+import {useExpandedCard} from '../hooks/useExpandedCard';
 import {SortPanel} from '../components/SortPanel';
 import {Toolbar} from '../components/Toolbar';
 
@@ -41,6 +42,7 @@ export function CometsScreen({
 }: Props) {
   const {comets, status, statusMsg, refreshing, refresh} = cometHook;
   const [showSort, setShowSort] = useState(false);
+  const {listRef, expandedKey, toggle} = useExpandedCard<(typeof rows)[number]>();
 
   type CometRow = CometTarget & {alt: number; az: number};
 
@@ -107,10 +109,20 @@ export function CometsScreen({
       )}
 
       <FlatList
+        ref={listRef}
+        onScrollToIndexFailed={() => {}}
         data={rows}
         keyExtractor={(item, i) => item.name + i}
-        renderItem={({item}) => (
-          <TargetCard target={item} onOpen={() => handleCometOpen(item)} />
+        renderItem={({item, index}) => (
+          <TargetCard
+            target={item}
+            obs={obs}
+            now={altAzNow}
+            minAlt={minAlt}
+            expanded={expandedKey === item.name}
+            onToggle={() => toggle(item.name, index)}
+            onOpen={() => handleCometOpen(item)}
+          />
         )}
         refreshing={refreshing}
         onRefresh={refresh}

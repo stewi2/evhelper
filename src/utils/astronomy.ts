@@ -38,6 +38,22 @@ export function radecToAltAz(
   return {alt, az};
 }
 
+// Low-precision solar position (Astronomical Almanac), good to ~0.01° — plenty
+// for classifying daylight vs. civil/astronomical twilight.
+export function sunAltitude(date: Date, lat: number, lon: number): number {
+  const n = date.getTime() / 86400000 + 2440587.5 - 2451545.0;
+  const L = (((280.46 + 0.9856474 * n) % 360) + 360) % 360;
+  const g = ((((357.528 + 0.9856003 * n) % 360) + 360) % 360) * (Math.PI / 180);
+  const lambda =
+    (L + 1.915 * Math.sin(g) + 0.02 * Math.sin(2 * g)) * (Math.PI / 180);
+  const eps = (23.439 - 0.0000004 * n) * (Math.PI / 180);
+  const ra =
+    (Math.atan2(Math.cos(eps) * Math.sin(lambda), Math.cos(lambda)) * 180) /
+    Math.PI;
+  const dec = (Math.asin(Math.sin(eps) * Math.sin(lambda)) * 180) / Math.PI;
+  return radecToAltAz(((ra % 360) + 360) % 360, dec, lat, lon, date).alt;
+}
+
 const DIRS = [
   'N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
   'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW',

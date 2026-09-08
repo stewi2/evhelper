@@ -20,6 +20,7 @@ import {fetchFreshDeeplink} from '../utils/customTargets';
 import type {CustomTarget} from '../utils/customTargets';
 import type {useCustomTargets} from '../hooks/useCustomTargets';
 import {TargetCard} from '../components/TargetCard';
+import {useExpandedCard} from '../hooks/useExpandedCard';
 import {SortPanel} from '../components/SortPanel';
 import {Toolbar} from '../components/Toolbar';
 
@@ -47,6 +48,7 @@ export function CustomScreen({
 }: Props) {
   const {targets, entries, failed, status, statusMsg, refreshing, refresh, addEntry, removeEntry} = customHook;
   const [showSort, setShowSort] = useState(false);
+  const {listRef, expandedKey, toggle} = useExpandedCard<(typeof rows)[number]>();
   const [showSearch, setShowSearch] = useState(false);
   const [query, setQuery] = useState('');
   const [searching, setSearching] = useState(false);
@@ -223,10 +225,21 @@ export function CustomScreen({
       )}
 
       <FlatList
+        ref={listRef}
+        onScrollToIndexFailed={() => {}}
         data={rows}
         keyExtractor={item => item.entryId}
-        renderItem={({item}) => (
-          <TargetCard target={item} onOpen={() => handleOpen(item)} onDelete={() => removeEntry(item.entryId)} />
+        renderItem={({item, index}) => (
+          <TargetCard
+            target={item}
+            obs={obs}
+            now={altAzNow}
+            minAlt={minAlt}
+            expanded={expandedKey === item.entryId}
+            onToggle={() => toggle(item.entryId, index)}
+            onOpen={() => handleOpen(item)}
+            onDelete={() => removeEntry(item.entryId)}
+          />
         )}
         refreshing={refreshing}
         onRefresh={refresh}
