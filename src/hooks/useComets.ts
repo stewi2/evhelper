@@ -25,7 +25,7 @@ export function useComets(obs: Obs | null) {
       setStatus('ok');
       setStatusMsg(`${targets.length} comets`);
       setLastUpdated(new Date());
-    } catch (err) {
+    } catch {
       setStatus('warn');
       setStatusMsg('Fetch failed');
     } finally {
