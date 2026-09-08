@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useState} from 'react';
+import {useState, useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -8,20 +8,39 @@ import {
   Linking,
   Alert,
   ActivityIndicator,
+  Animated,
   Platform,
 } from 'react-native';
 import type {TargetWithAltAz} from '../utils/targets';
 import {compassDir, altColor, formatRA, formatDec} from '../utils/astronomy';
 import {Colors, getClassColor} from '../utils/theme';
+import {AltitudeChart} from './AltitudeChart';
 
 interface Props {
   target: TargetWithAltAz;
+  obs: {lat: number; lon: number};
+  now: Date;
+  expanded: boolean;
+  onToggle: () => void;
+  minAlt?: number | null;
   onOpen?: () => Promise<void>;
   onDelete?: () => void;
 }
 
-export function TargetCard({target: r, onOpen, onDelete}: Props) {
+export function TargetCard({
+  target: r, obs, now, expanded, onToggle, minAlt, onOpen, onDelete,
+}: Props) {
   const [opening, setOpening] = useState(false);
+  const spin = useRef(new Animated.Value(expanded ? 1 : 0)).current;
+
+  useEffect(() => {
+    Animated.timing(spin, {
+      toValue: expanded ? 1 : 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  }, [expanded, spin]);
+
   const abv = r.alt >= 0;
   const ac = altColor(r.alt);
   const cc = getClassColor(r.cls);
@@ -46,7 +65,10 @@ export function TargetCard({target: r, onOpen, onDelete}: Props) {
   }
 
   return (
-    <View style={[styles.card, r.priority && styles.cardPriority]}>
+    <TouchableOpacity
+      style={[styles.card, r.priority && styles.cardPriority]}
+      activeOpacity={0.9}
+      onPress={onToggle}>
       {/* Top row */}
       <View style={styles.topRow}>
         <View style={[styles.dot, {backgroundColor: abv ? Colors.accent : Colors.danger, shadowColor: abv ? Colors.accent : 'transparent'}]} />
@@ -101,7 +123,35 @@ export function TargetCard({target: r, onOpen, onDelete}: Props) {
         <DetailCell label="Gain" value={r.gain || '—'} />
         <DetailCell label="Dur"  value={r.duration ? `${Math.round(Number(r.duration) / 60)}m` : '—'} />
       </View>
-    </View>
+
+      {expanded && (
+        <AltitudeChart
+          ra={r.ra}
+          dec={r.dec}
+          lat={obs.lat}
+          lon={obs.lon}
+          start={now}
+          minAlt={minAlt}
+        />
+      )}
+
+      <Animated.Text
+        style={[
+          styles.chevron,
+          {
+            transform: [
+              {
+                rotate: spin.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ['0deg', '180deg'],
+                }),
+              },
+            ],
+          },
+        ]}>
+        ▼
+      </Animated.Text>
+    </TouchableOpacity>
   );
 }
 
@@ -195,6 +245,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.danger,
     fontWeight: '700',
+  },
+  chevron: {
+    color: Colors.muted,
+    fontSize: 10,
+    textAlign: 'center',
+    marginTop: 10,
+    marginBottom: -6,
   },
   altRow: {
     flexDirection: 'row',

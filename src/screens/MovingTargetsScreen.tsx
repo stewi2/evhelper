@@ -14,6 +14,7 @@ import {fetchFreshDeeplink} from '../utils/movingTargets';
 import type {MovingTarget} from '../utils/movingTargets';
 import type {useMovingTargets} from '../hooks/useMovingTargets';
 import {TargetCard} from '../components/TargetCard';
+import {useExpandedCard} from '../hooks/useExpandedCard';
 import {SortPanel} from '../components/SortPanel';
 import {Toolbar} from '../components/Toolbar';
 
@@ -41,6 +42,7 @@ export function MovingTargetsScreen({
 }: Props) {
   const {movingTargets, status, statusMsg, refreshing, refresh} = movingTargetsHook;
   const [showSort, setShowSort] = useState(false);
+  const {listRef, expandedKey, toggle} = useExpandedCard<(typeof rows)[number]>();
 
   type MovingRow = MovingTarget & {alt: number; az: number};
 
@@ -106,10 +108,20 @@ export function MovingTargetsScreen({
       )}
 
       <FlatList
+        ref={listRef}
+        onScrollToIndexFailed={() => {}}
         data={rows}
         keyExtractor={(item, i) => item.name + i}
-        renderItem={({item}) => (
-          <TargetCard target={item} onOpen={() => handleOpen(item)} />
+        renderItem={({item, index}) => (
+          <TargetCard
+            target={item}
+            obs={obs}
+            now={altAzNow}
+            minAlt={minAlt}
+            expanded={expandedKey === item.name}
+            onToggle={() => toggle(item.name, index)}
+            onOpen={() => handleOpen(item)}
+          />
         )}
         refreshing={refreshing}
         onRefresh={refresh}

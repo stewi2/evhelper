@@ -6,6 +6,7 @@ import {radecToAltAz} from '../utils/astronomy';
 import {Toolbar} from '../components/Toolbar';
 import {SortPanel} from '../components/SortPanel';
 import {TargetCard} from '../components/TargetCard';
+import {useExpandedCard} from '../hooks/useExpandedCard';
 import type {useTargets} from '../hooks/useTargets';
 import type {TargetWithAltAz} from '../utils/targets';
 
@@ -36,6 +37,7 @@ export function TransientsScreen({
 }: Props) {
   const {targets, status, statusMsg, lastUpdated, refreshing, refresh} = targetHook;
   const [showSort, setShowSort] = useState(false);
+  const {listRef, expandedKey, toggle} = useExpandedCard<(typeof rows)[number]>();
 
   const rows = useMemo<TargetWithAltAz[]>(() => {
     const computed = targets.map(t => ({
@@ -89,9 +91,20 @@ export function TransientsScreen({
       )}
 
       <FlatList
+        ref={listRef}
+        onScrollToIndexFailed={() => {}}
         data={rows}
         keyExtractor={(item, i) => item.name + i}
-        renderItem={({item}) => <TargetCard target={item} />}
+        renderItem={({item, index}) => (
+          <TargetCard
+            target={item}
+            obs={obs}
+            now={altAzNow}
+            minAlt={minAlt}
+            expanded={expandedKey === item.name}
+            onToggle={() => toggle(item.name, index)}
+          />
+        )}
         refreshing={refreshing}
         onRefresh={refresh}
         contentContainerStyle={styles.list}
