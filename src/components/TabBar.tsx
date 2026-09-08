@@ -2,7 +2,7 @@ import * as React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native';
 import {Colors} from '../utils/theme';
 
-export type Tab = 'transients' | 'comets';
+export type Tab = 'transients' | 'comets' | 'moving' | 'custom';
 
 interface Props {
   active: Tab;
@@ -12,6 +12,8 @@ interface Props {
 const TABS: {key: Tab; label: string}[] = [
   {key: 'transients', label: 'TRANSIENTS'},
   {key: 'comets',     label: 'COMETS'},
+  {key: 'moving',     label: 'MOVING'},
+  {key: 'custom',     label: 'CUSTOM'},
 ];
 
 export function TabBar({active, onChange}: Props) {

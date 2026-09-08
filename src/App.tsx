@@ -6,12 +6,16 @@ import Geolocation from '@react-native-community/geolocation';
 import {Colors, SortKey} from './utils/theme';
 import {useTargets} from './hooks/useTargets';
 import {useComets} from './hooks/useComets';
+import {useMovingTargets} from './hooks/useMovingTargets';
+import {useCustomTargets} from './hooks/useCustomTargets';
 import {useClock} from './hooks/useClock';
 import {Header} from './components/Header';
 import {TabBar} from './components/TabBar';
 import {LocationPanel} from './components/LocationPanel';
 import {TransientsScreen} from './screens/TransientsScreen';
 import {CometsScreen} from './screens/CometsScreen';
+import {MovingTargetsScreen} from './screens/MovingTargetsScreen';
+import {CustomScreen} from './screens/CustomScreen';
 import type {Tab} from './components/TabBar';
 
 interface Obs {
@@ -24,10 +28,12 @@ const MONO = Platform.OS === 'ios' ? 'Courier New' : 'monospace';
 export default function App() {
   const now = useClock(1000);
   const altAzNow = useClock(60000);
-  const targetHook = useTargets();
-  const cometHook = useComets();
-
   const [obs, setObs] = useState<Obs | null>(null);
+  const targetHook = useTargets();
+  const cometHook = useComets(obs);
+  const movingTargetsHook = useMovingTargets(obs);
+  const customHook = useCustomTargets(obs);
+
   const [locError, setLocError] = useState<string | null>(null);
   const [locLoading, setLocLoading] = useState(false);
   const [initialCheckDone, setInitialCheckDone] = useState(false);
@@ -132,6 +138,32 @@ export default function App() {
           altAzNow={altAzNow}
           onToggleLocation={toggleLocation}
           cometHook={cometHook}
+          sortKey={sortKey}
+          onSortChange={setSortKey}
+          minAlt={minAlt}
+          onMinAltChange={setMinAlt}
+        />
+      )}
+
+      {activeTab === 'moving' && (
+        <MovingTargetsScreen
+          obs={displayObs}
+          altAzNow={altAzNow}
+          onToggleLocation={toggleLocation}
+          movingTargetsHook={movingTargetsHook}
+          sortKey={sortKey}
+          onSortChange={setSortKey}
+          minAlt={minAlt}
+          onMinAltChange={setMinAlt}
+        />
+      )}
+
+      {activeTab === 'custom' && (
+        <CustomScreen
+          obs={displayObs}
+          altAzNow={altAzNow}
+          onToggleLocation={toggleLocation}
+          customHook={customHook}
           sortKey={sortKey}
           onSortChange={setSortKey}
           minAlt={minAlt}

@@ -1,8 +1,17 @@
 import {parseRA, parseDec} from './astronomy';
+import {mapWithConcurrency} from './concurrency';
+import {fetchHorizonsJson} from './horizonsClient';
 import type {Target} from './targets';
+
+const HORIZONS_CONCURRENCY = 4;
 
 export interface CometTarget extends Target {
   objectName: string; // JPL Horizons object_name for re-fetching ephemeris
+}
+
+export interface Obs {
+  lat: number;
+  lon: number;
 }
 
 const UNISTELLAR_URL =
@@ -19,7 +28,7 @@ interface UnistellarComet {
   date_comet: [string, string];
 }
 
-function toYYMMDD(date: Date): string {
+export function toYYMMDD(date: Date): string {
   const yy = String(date.getFullYear()).slice(2);
   const mm = String(date.getMonth() + 1).padStart(2, '0');
   const dd = String(date.getDate()).padStart(2, '0');
@@ -42,9 +51,13 @@ function parseHorizonsLine(result: string): {ra: number; dec: number; mag: strin
   const line = block.split('\n').find(l => l.trim().length > 0);
   if (!line) {return null;}
   // Format: " 2026-Mar-18 00:00     16 55 57.00 -16 55 24.1   8.23   n.a."
-  // Datetime prefix is 18 chars (" YYYY-Mon-DD HH:MM"), then spaces, then RA/Dec, then APmag
+  // Datetime prefix is 18 chars (" YYYY-Mon-DD HH:MM"), then spaces, then RA/Dec, then APmag.
+  // Topocentric queries (observer-site coordinates) insert a one-character
+  // rise/set/twilight flag column (e.g. "*") right after the datetime, which
+  // survives trim() and would otherwise block the RA match below.
   const rest = line.slice(18).trim();
-  const raMatch = rest.match(/^(\d{2} \d{2} \d{2,}\.\d+)\s+([+-]\d{2} \d{2} \d{2,}\.\d+)\s+([\d.]+|n\.a\.)/);
+  // Magnitude can be negative for very bright objects (Jupiter, Venus, ...).
+  const raMatch = rest.match(/^[A-Za-z*]?\s*(\d{2} \d{2} \d{2,}\.\d+)\s+([+-]\d{2} \d{2} \d{2,}\.\d+)\s+([+-]?[\d.]+|n\.a\.)/);
   if (!raMatch) {return null;}
   const ra = parseRA(raMatch[1]);
   const dec = parseDec(raMatch[2]);
@@ -53,10 +66,21 @@ function parseHorizonsLine(result: string): {ra: number; dec: number; mag: strin
   return {ra, dec, mag};
 }
 
-function buildHorizonsUrl(command: string, start: string, stop: string): string {
+// Geocentric coordinates are a fine approximation for anything far from
+// Earth (comets, asteroids, deep-space spacecraft), but meaningless for
+// near-Earth satellites like the ISS — at ~400km altitude, parallax swings
+// its apparent position across the whole sky depending on where on Earth
+// you're standing. App.tsx's hooks don't start fetching until the observer's
+// real location is available, so this always computes topocentrically.
+function centerParams(obs: Obs): string {
+  const site = encodeURIComponent(`'${obs.lon},${obs.lat},0'`);
+  return `CENTER=coord%40399&COORD_TYPE=GEODETIC&SITE_COORD=${site}`;
+}
+
+function buildHorizonsUrl(command: string, start: string, stop: string, obs: Obs): string {
   return (
     `${HORIZONS_URL}?format=json&COMMAND=${command}&MAKE_EPHEM=YES&EPHEM_TYPE=OBSERVER` +
-    `&CENTER=500%40399&START_TIME=${start}&STOP_TIME=${stop}` +
+    `&${centerParams(obs)}&START_TIME=${start}&STOP_TIME=${stop}` +
     `&STEP_SIZE=1d&QUANTITIES=%271%2C9%27&OBJ_DATA=NO`
   );
 }
@@ -72,58 +96,52 @@ function extractBestRecord(result: string): string | null {
   return mainBody[0][1];
 }
 
-async function fetchHorizons(objectName: string, date: Date): Promise<{ra: number; dec: number; mag: string} | null> {
-  const start = toHorizonsDate(date);
-  const stop = toHorizonsDate(new Date(date.getTime() + 86400000));
-
-  const command = encodeURIComponent(`'${objectName}'`);
-  const url = buildHorizonsUrl(command, start, stop);
-  console.log(`[horizons] fetching: ${url}`);
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 15000);
-  let res: Response;
+// Fetches RA/Dec/mag for a free-text object name, retrying against the best
+// disambiguation-table record if Horizons can't resolve the name uniquely.
+// Shared with movingTargets.ts, which needs the exact same resolution logic.
+export async function fetchHorizons(objectName: string, date: Date, obs: Obs): Promise<{ra: number; dec: number; mag: string} | null> {
   try {
-    res = await fetch(url, {signal: controller.signal});
-  } finally {
-    clearTimeout(timer);
-  }
-  if (!res.ok) {return null;}
-  const json = await res.json();
-  if (json.error) {
-    console.warn(`[horizons:${objectName}] API error:`, json.error);
-    return null;
-  }
-  const result = json.result ?? '';
-  const parsed = parseHorizonsLine(result);
-  if (parsed) {return parsed;}
+    const start = toHorizonsDate(date);
+    const stop = toHorizonsDate(new Date(date.getTime() + 86400000));
 
-  // Horizons returned a disambiguation table — retry with the best record number + semicolon.
-  const recordId = extractBestRecord(result);
-  if (!recordId) {
-    console.warn(`[horizons:${objectName}] parse failed (no record ID):`, result.slice(0, 400));
+    const command = encodeURIComponent(`'${objectName}'`);
+    const url = buildHorizonsUrl(command, start, stop, obs);
+    console.log(`[horizons] fetching: ${url}`);
+    const json = await fetchHorizonsJson(url);
+    if (json.error) {
+      console.warn(`[horizons:${objectName}] API error:`, json.error);
+      return null;
+    }
+    const result = json.result ?? '';
+    const parsed = parseHorizonsLine(result);
+    if (parsed) {return parsed;}
+
+    // Horizons returned a disambiguation table — retry with the best record number + semicolon.
+    const recordId = extractBestRecord(result);
+    if (!recordId) {
+      console.warn(`[horizons:${objectName}] parse failed (no record ID):`, result.slice(0, 400));
+      return null;
+    }
+    console.log(`[horizons:${objectName}] retrying with record ${recordId}`);
+    // Horizons requires "integer;" format for direct record selection (no quotes).
+    const json2 = await fetchHorizonsJson(buildHorizonsUrl(`${recordId}%3B`, start, stop, obs));
+    if (json2.error) {
+      console.warn(`[horizons:${objectName}] retry error:`, json2.error);
+      return null;
+    }
+    const parsed2 = parseHorizonsLine(json2.result ?? '');
+    if (!parsed2) {
+      console.warn(`[horizons:${objectName}] retry parse failed:`, (json2.result ?? '').slice(0, 300));
+    }
+    return parsed2;
+  } catch (err: any) {
+    // fetchHorizonsJson throws on network failure / exhausted 503 retries —
+    // preserve this function's "null on failure" contract so callers that
+    // don't wrap it in their own try/catch (e.g. fetchFreshDeeplink) still
+    // behave correctly.
+    console.warn(`[horizons:${objectName}] request failed:`, err?.message ?? err);
     return null;
   }
-  console.log(`[horizons:${objectName}] retrying with record ${recordId}`);
-  // Horizons requires "integer;" format for direct record selection (no quotes).
-  const controller2 = new AbortController();
-  const timer2 = setTimeout(() => controller2.abort(), 15000);
-  let res2: Response;
-  try {
-    res2 = await fetch(buildHorizonsUrl(`${recordId}%3B`, start, stop), {signal: controller2.signal});
-  } finally {
-    clearTimeout(timer2);
-  }
-  if (!res2.ok) {return null;}
-  const json2 = await res2.json();
-  if (json2.error) {
-    console.warn(`[horizons:${objectName}] retry error:`, json2.error);
-    return null;
-  }
-  const parsed2 = parseHorizonsLine(json2.result ?? '');
-  if (!parsed2) {
-    console.warn(`[horizons:${objectName}] retry parse failed:`, (json2.result ?? '').slice(0, 300));
-  }
-  return parsed2;
 }
 
 function buildDeeplink(
@@ -147,7 +165,7 @@ function buildDeeplink(
   );
 }
 
-export async function fetchComets(date: Date): Promise<CometTarget[]> {
+export async function fetchComets(date: Date, obs: Obs): Promise<CometTarget[]> {
   const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   const res = await fetch(UNISTELLAR_URL + dateStr);
   if (!res.ok) {throw new Error(`Unistellar API HTTP ${res.status}`);}
@@ -160,19 +178,17 @@ export async function fetchComets(date: Date): Promise<CometTarget[]> {
   });
   console.log(`[comets] ${list.length} total, ${active.length} active on ${dateStr}:`, active.map(c => c.object_name));
 
-  const results: (CometTarget | null)[] = [];
-  for (const c of active) {
-    const pos = await fetchHorizons(c.object_name, date).catch(err => {
+  const results = await mapWithConcurrency(active, HORIZONS_CONCURRENCY, async c => {
+    const pos = await fetchHorizons(c.object_name, date, obs).catch(err => {
       console.warn(`[comets] fetchHorizons threw for ${c.object_name}:`, err?.message ?? err);
       return null;
     });
     if (!pos) {
       console.warn(`[comets] Horizons failed for ${c.object_name}`);
-      results.push(null);
-      continue;
+      return null;
     }
     const deeplink = buildDeeplink(pos.ra, pos.dec, c.exp_time, c.gain_db, c.duration, c.object_name, date);
-    results.push({
+    return {
       name: c.comet_name,
       cls: 'COMET',
       mag: pos.mag,
@@ -185,8 +201,8 @@ export async function fetchComets(date: Date): Promise<CometTarget[]> {
       dec: pos.dec,
       priority: false,
       objectName: c.object_name,
-    });
-  }
+    } as CometTarget;
+  });
 
   return results.filter((t): t is CometTarget => t !== null);
 }
@@ -198,9 +214,10 @@ export async function fetchFreshDeeplink(
   expTime: number,
   gainDb: number,
   duration: string,
+  obs: Obs,
 ): Promise<string | null> {
   const now = new Date();
-  const pos = await fetchHorizons(objectName, now);
+  const pos = await fetchHorizons(objectName, now, obs);
   if (!pos) {return null;}
   return buildDeeplink(pos.ra, pos.dec, expTime, gainDb, duration, objectName, now);
 }

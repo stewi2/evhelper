@@ -9,9 +9,9 @@
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCBA2D00DB3ED1 /* main.m */; };
 		00C302EA1ABCBA2D00DB3ED1 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 00C302E91ABCBA2D00DB3ED1 /* AppDelegate.mm */; };
-		071EFA5CFC2A76BF9F274BAD /* libPods-eVHelper.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A592EFC9E38FE5078934C1FA /* libPods-eVHelper.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.h in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB61A68108700A75B9A /* AppDelegate.h */; };
 		2D02E4BE1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2D02E4BD1E0B4A84006451C7 /* Images.xcassets */; };
+		6EB5544E28DA0D0F2227C323 /* libPods-eVHelper.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 55E3AD1B3ADDC33CD87D19D4 /* libPods-eVHelper.a */; };
 		9FD50E8B856B91F4E8CC177E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 20F391340F3E1E1AC5D57A63 /* PrivacyInfo.xcprivacy */; };
 		A1B2C3D4E5F6A1B2C3D4E5F6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A1B2C3D4E5F7 /* LaunchScreen.storyboard */; };
 		B1D2E3F4A5B6C7D8E9F0A1B2 /* Dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E3F4A5B6C7D8E9F0A1B2C3 /* Dummy.swift */; };
@@ -24,10 +24,10 @@
 		13B07FB71A68108700A75B9A /* eVHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eVHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20F391340F3E1E1AC5D57A63 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = ../PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		3465F1DF8C8883DA9D565CCF /* Pods-eVHelper.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-eVHelper.release.xcconfig"; path = "Target Support Files/Pods-eVHelper/Pods-eVHelper.release.xcconfig"; sourceTree = "<group>"; };
-		3ED255F6107C790FCFCC47BE /* Pods-eVHelper.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-eVHelper.debug.xcconfig"; path = "Target Support Files/Pods-eVHelper/Pods-eVHelper.debug.xcconfig"; sourceTree = "<group>"; };
+		53F512C004A4353DD25117E4 /* Pods-eVHelper.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-eVHelper.debug.xcconfig"; path = "Target Support Files/Pods-eVHelper/Pods-eVHelper.debug.xcconfig"; sourceTree = "<group>"; };
+		55E3AD1B3ADDC33CD87D19D4 /* libPods-eVHelper.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-eVHelper.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		709F02F91C188FD0535E5825 /* Pods-eVHelper.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-eVHelper.release.xcconfig"; path = "Target Support Files/Pods-eVHelper/Pods-eVHelper.release.xcconfig"; sourceTree = "<group>"; };
 		A1B2C3D4E5F6A1B2C3D4E5F7 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
-		A592EFC9E38FE5078934C1FA /* libPods-eVHelper.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-eVHelper.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2E3F4A5B6C7D8E9F0A1B2C3 /* Dummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dummy.swift; sourceTree = "<group>"; };
 		D3F4A5B6C7D8E9F0A1B2C3D4 /* eVHelper-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "eVHelper-Bridging-Header.h"; sourceTree = "<group>"; };
 		ED2803B4B34C4A679246C8B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -38,7 +38,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				071EFA5CFC2A76BF9F274BAD /* libPods-eVHelper.a in Frameworks */,
+				6EB5544E28DA0D0F2227C323 /* libPods-eVHelper.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,21 +61,13 @@
 			path = eVHelper;
 			sourceTree = "<group>";
 		};
-		326BFAE57FC3606FBC90DFA0 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				A592EFC9E38FE5078934C1FA /* libPods-eVHelper.a */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
 				13B07FAE1A68108700A75B9A /* eVHelper */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				973002E363427EFEECEAA6E3 /* Pods */,
-				326BFAE57FC3606FBC90DFA0 /* Frameworks */,
+				EE7EB27D332AA04543467877 /* Frameworks */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -93,10 +85,18 @@
 		973002E363427EFEECEAA6E3 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3ED255F6107C790FCFCC47BE /* Pods-eVHelper.debug.xcconfig */,
-				3465F1DF8C8883DA9D565CCF /* Pods-eVHelper.release.xcconfig */,
+				53F512C004A4353DD25117E4 /* Pods-eVHelper.debug.xcconfig */,
+				709F02F91C188FD0535E5825 /* Pods-eVHelper.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		EE7EB27D332AA04543467877 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				55E3AD1B3ADDC33CD87D19D4 /* libPods-eVHelper.a */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -106,14 +106,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "eVHelper" */;
 			buildPhases = (
-				F894249A602F21D4EC4D8500 /* [CP] Check Pods Manifest.lock */,
+				28CB0F10494628CD5938239F /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				DFE74F3BC1AE268FAE5AB4B3 /* [CP] Embed Pods Frameworks */,
-				73570B07E202A601401C9542 /* [CP] Copy Pods Resources */,
+				7637364E29C3D651B1874735 /* [CP] Embed Pods Frameworks */,
+				9381244BE93C03B1B0FD0596 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -190,41 +190,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		73570B07E202A601401C9542 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-eVHelper/Pods-eVHelper-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-eVHelper/Pods-eVHelper-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-eVHelper/Pods-eVHelper-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		DFE74F3BC1AE268FAE5AB4B3 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-eVHelper/Pods-eVHelper-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-eVHelper/Pods-eVHelper-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-eVHelper/Pods-eVHelper-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F894249A602F21D4EC4D8500 /* [CP] Check Pods Manifest.lock */ = {
+		28CB0F10494628CD5938239F /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -244,6 +210,40 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7637364E29C3D651B1874735 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-eVHelper/Pods-eVHelper-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-eVHelper/Pods-eVHelper-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-eVHelper/Pods-eVHelper-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9381244BE93C03B1B0FD0596 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-eVHelper/Pods-eVHelper-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-eVHelper/Pods-eVHelper-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-eVHelper/Pods-eVHelper-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -283,7 +283,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3ED255F6107C790FCFCC47BE /* Pods-eVHelper.debug.xcconfig */;
+			baseConfigurationReference = 53F512C004A4353DD25117E4 /* Pods-eVHelper.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -318,7 +318,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3465F1DF8C8883DA9D565CCF /* Pods-eVHelper.release.xcconfig */;
+			baseConfigurationReference = 709F02F91C188FD0535E5825 /* Pods-eVHelper.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;

@@ -18,6 +18,15 @@ export const ClassColors: Record<string, string> = {
   VS:    '#3ef0c0',
   AGN:   '#c46dff',
   COMET: '#3dd6f5',
+  // Must precede PLANET below — getClassColor matches substrings in
+  // insertion order, and "MINOR PLANET" contains "PLANET".
+  'MINOR PLANET': '#e0a858',
+  ASTEROID: '#f5d76e',
+  SPACECRAFT: '#ff9fd6',
+  SATELLITE: '#b8e0d2',
+  BARYCENTER: '#6a7a9a',
+  PLANET: '#8fd6ff',
+  OTHER: '#a0b0d0',
 };
 
 export function getClassColor(cls: string): string {
